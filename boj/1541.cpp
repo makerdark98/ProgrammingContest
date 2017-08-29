@@ -1,35 +1,13 @@
-#include <iostream>
-using namespace std;
-int main() {
-    int S;
-    scanf("%d",&S);
-    while(true){
-        char c;
-        int num;
-        scanf(" %c",&c);
-        if(c=='\n'){
-            printf("%d",S);
-            return 0;
-        }
-        scanf("%d",&num);
-        if(c=='-'){
-            S-=num;
-            break;
-        }
-        else{
-            S+=num;
-        }
+#include <stdio.h>
+#include <stdlib.h>
+int main(){
+    int sum=0;
+    int input;
+    int tmp = 1;
+    while(scanf("%d",&input)!=EOF){
+        if(input<0) tmp = -1;
+        sum+=abs(input)*tmp;
     }
-    while(true){
-        char c;
-        int num;
-        scanf(" %c",&c);
-        if(c=='\n'){
-            break;
-        }
-        scanf("%c",&num);
-        S-=num;
-    }
-    printf("%d\n",S);
+    printf("%d\n",sum);
     return 0;
 }
