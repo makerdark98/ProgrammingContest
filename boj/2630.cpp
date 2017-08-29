@@ -1,50 +1,50 @@
 #include <iostream>
+#include <stdio.h>
+#include <stdlib.h>
+#include <vector>
+using namespace std;
+typedef pair<int, int> ii;
 
-int Map[130][130];
-int Divide(int xs,int xe,int ys,int ye, int& bcount,int& wcount){
-    if(xs>=xe){
-        if(Map[xs][ys]) {
-            bcount =1;
-            wcount = 0;
+int N;
+int white, blue;
+
+vector< vector<int> > Map;
+int check(ii s, ii e){
+    for(int i=s.first;i<=e.first;i++){
+        for(int j=s.second;j<=e.second;j++){
+            if(Map[i][j]!=Map[e.first][e.second])
+                return false;
         }
-        else {
-            bcount = 0;
-            wcount =1;
-        }
-        return Map[xs][ys];
     }
-    int n1,n2,n3,n4;
-    int bc1,bc2,bc3,bc4;
-    int wc1,wc2,wc3,wc4;
-    n1=Divide(xs,xs+(xe-xs)/2,ys,ys+(ye-ys)/2,bc1,wc1);
-    n2=Divide(xs+(xe-xs)/2+1, xe, ys,ys+(ye-ys)/2,bc2,wc2);
-    n3=Divide(xs+(xe-xs)/2+1,xe,ys+(ye-ys)/2+1,ye,bc3,wc3);
-    n4=Divide(xs,xs+(xe-xs)/2,ys+(ye-ys)/2+1,ye,bc4,wc4);
-    bcount=bc1+bc2+bc3+bc4;
-    wcount=wc1+wc2+wc3+wc4;
-    if(n1==n2&&n1==n3&&n1==n4) {
-        if(Map[xs][ys]) {
-            bcount =1;
-            wcount = 0;
-        }
-        else {
-            bcount = 0;
-            wcount =1;
-        }        return Map[xs][ys];
-    }
-    return -1;
+    return true;
 }
 
-int main() {
-    int N, bcount,wcount;
+void Divide(ii s, ii e){
+    ii m = make_pair(s.first+(e.first-s.first)/2, s.second+(e.second-s.second)/2);
+    if(check(s, e)) {
+        if(Map[s.first][s.second]) blue++;
+        else white++;
+    }
+    else{
+        Divide(s, m);
+        Divide(make_pair(m.first+1,s.second),make_pair(e.first,m.second));
+        Divide(make_pair(s.first,m.second+1),make_pair(m.first,e.second));
+        Divide(make_pair(m.first+1,m.second+1), e);
+    }
+}
+
+int main(){
     scanf("%d",&N);
-    for(int i = 0; i<N;i++){
-        for(int j =0;j<N;j++){
-            scanf("%d",&Map[i][j]);
+    Map.resize(N);
+    for(int i=0;i<N;i++){
+        Map[i].resize(N);
+    }
+    for(int i=0;i<N;i++){
+        for(int j=0;j<N; j++){
+            scanf("%d", &Map[i][j]);
         }
     }
-    Divide(0,N-1,0,N-1,bcount,wcount);
-    printf("%d\n%d",wcount,bcount);
-
+    Divide(make_pair(0,0), make_pair(N-1,N-1));
+    printf("%d\n%d", white, blue);
     return 0;
 }
