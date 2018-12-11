@@ -2,8 +2,8 @@
 #include <bits/stdc++.h>
 #define sci(n) scanf("%d", &(n))
 #define scl(n) scanf("%lld", &(n))
-#define pri(n) printf("%d\n", (n))
-#define prl(n) printf("%lld", (n))
+#define pri(n) printf("%d ", (n))
+#define prl(n) printf("%lld ", (n))
 using namespace std;
 typedef long long lld;
 typedef pair<lld, lld> pii;
