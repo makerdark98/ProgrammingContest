@@ -7,10 +7,11 @@ int main() {
         int L, W, H;
         scanf("%d %d %d",&L,&W,&H);
         printf("Case %d: ",i);
-        if(L>20||W>20||H>20){
-            printf("bad\n");
+        if(L<=20 && W<=20 && H <=20){
+            printf("good\n");
         }
-        else printf("good\n");
+        else
+            printf("bad\n");
     }
     return 0;
 }
