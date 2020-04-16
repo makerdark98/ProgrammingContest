@@ -53,7 +53,6 @@ int main() {
   scl(N), scl(M), scl(C);
   range.resize(N+1);
   edges.resize(N+1);
-  visited.assign(N+1, 0);
   for(lld i=1;i<=N;i++) {
     lld c;
     scl(c);
