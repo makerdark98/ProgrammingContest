@@ -23,6 +23,7 @@ lld set_size[MAX_V];
 lld depth[1 << 18];
 lld par[18][1 << 18];
 lld maxEdge[18][1 << 18];
+lld maxSecondEdge[18][1 << 18];
 bool useEdge[MAX_E];
 vector<vector<pair<lld, lld >>> tree_edges;
 void init(lld N) {
@@ -59,14 +60,18 @@ lld lca(lld s, lld e){
 }
 
 lld getMaxEdge(lld s, lld level, lld except) {
-  if (level < 0) return 0;
-  if (level == 0) return maxEdge[0][s];
+  if (level < 0) return -1;
+  if (level == 0 && maxEdge[0][s] != except) return maxEdge[0][s];
   lld base = log2(level);
-  lld tmp = getMaxEdge(par[base][s], level - (1 << base), except);
-  lld retval;
-  if (maxEdge[base][s] == except || (tmp != except && maxEdge[base][s] < tmp)) retval = tmp;
-  else tmp = maxEdge[base][s];
-  return  tmp;
+  int tmp[3];
+  tmp[0] = getMaxEdge(par[base][s], level - (1 << base), except);
+  tmp[1] = maxEdge[base][s];
+  tmp[2] = maxSecondEdge[base][s];
+  sort(tmp, tmp + 3);
+  int k;
+  for (k = 2; k > 0 && tmp[k] == except; k--)
+    ;
+  return tmp[k];
 }
 
 void dfs(lld idx) {
@@ -78,6 +83,7 @@ void dfs(lld idx) {
       depth[to] = depth[idx] + 1;
       par[0][to] = idx;
       maxEdge[0][to] = cost;
+      maxSecondEdge[0][to] = -1;
       dfs(to);
     }
   }
@@ -119,6 +125,16 @@ int main () {
     for (lld j = 1; j <= N; j++) {
       par[i][j] = par[i-1][par[i-1][j]];
       maxEdge[i][j] = max(maxEdge[i-1][par[i-1][j]], maxEdge[i-1][j]);
+      int tmp[4];
+      tmp[0] = maxEdge[i-1][par[i-1][j]];
+      tmp[1] = maxEdge[i-1][j];
+      tmp[2] = maxSecondEdge[i-1][par[i-1][j]];
+      tmp[3] = maxSecondEdge[i-1][j];
+      sort(tmp, tmp + 4);
+      int k = 2;
+      while (k >= 0 && tmp[k] == tmp[k+1])
+        k--;
+      maxSecondEdge[i][j] = tmp[k];
     }
   }
   
@@ -132,6 +148,7 @@ int main () {
       lld l = lca(edge.a, edge.b);
       lld a = getMaxEdge(edge.a, depth[edge.a] - depth[l] - 1, edge.cost);
       lld b = getMaxEdge(edge.b, depth[edge.b] - depth[l] - 1, edge.cost);
+      if (a == -1 && b == -1) continue;
       long long value = mst_value - max(a, b) + edge.cost;
       result = (value != mst_value && (result == mst_value || result > value)) ? value : result;
     }
